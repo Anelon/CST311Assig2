@@ -1,0 +1,39 @@
+
+
+def main():
+	numPings = some number
+	successes = 0
+	fastest
+	slowest
+	
+	for loop (numPings):
+		val = ping(target)
+		if val == -1
+			print timeout
+			continue
+		successes += 1
+		fastest = min(fastest, val)
+		slowest = max(slowest, val)
+		if first successful trip
+			rtt = val
+			srtt = val
+			devRTT = val
+		rtt = val * .875 + rtt * .125
+		devRTT= .75 * devRTT +  .25 * abs(srtt - rtt)
+		print ping time
+	print the string messages (min, max, average, rtts)
+	
+		
+
+
+
+
+
+def ping():
+	send to server
+	start = timeNow()
+	while timeNow() < now + 1 second:
+		if message received:
+			totalTime = timeNow() - start
+			return totalTime
+	return -1
