@@ -3,6 +3,7 @@
 from __future__ import division #uses division format
 from socket import *  # import socket interfaces
 from datetime import datetime
+import time
 serverName = 'localhost'  # server ip for computers
 serverPort = 12000 # server port number
 clientSocket = socket(AF_INET, SOCK_DGRAM)
@@ -20,13 +21,13 @@ avgRTT = 0
 
 while packages < 10:
     message = "Ping"
-    start_time = datetime.now() #current start time
+    start_time = int(round(time.time() * 1000)) #current start time
     # the client sends the message to the server, the client sends the ping message to the server
     clientSocket.sendto(message.encode(), (serverName, serverPort))
 
     try:
         message, address = clientSocket.recvfrom(1024) # message and address is received from the server, the client gets ping back
-        end_time = datetime.now() #end time
+        end_time = int(round(time.time() * 1000)) #end time
         SampleRTT = end_time-start_time #round trip time for the UPD client to send “ping” and get the “ping” message back
         print("Server responded: Round trip time (RTT) =", SampleRTT)
 
@@ -35,23 +36,23 @@ while packages < 10:
         #(10 %) Calculate and print the estimated RTT. Consider alpha = 0.125.
         #Formula: EstimatedRTT = (1- 0.125)*EstimatedRTT + 0.125*SampleRTT
 
-        EstimatedRTT = 0.875*EstimatedRTT + 0.125*sampleRTT
+        EstimatedRTT = 0.875*EstimatedRTT + 0.125*SampleRTT
         print("EstimatedRTT =", EstimatedRTT)
 
         #TODO calculate min max and average
         #( (10 %) Calculate and print DevRTT. Consider beta = 0.25. Calculate and print Timeout interval.
 
         #estimate SampleRTT deviation from EstimatedRTT Formula: DevRTT = (1-0.25)*DevRTT +  0.25*|SampleRTT-EstimatedRTT|
-        #if DecRTT is a small value then RTT is constant if not then RTT is inconstant. 
-        DevRTT = 0.75*DevRTT + 0.25*abs(sampleRTT-EstimatedRTT)
+        #if DecRTT is a small value then RTT is constant if not then RTT is inconstant.
+        DevRTT = 0.75*DevRTT + 0.25*abs(SampleRTT-EstimatedRTT)
 
         print("DevRTT =", DevRTT)
 
         TimeoutInterval = EstimatedRTT + 4*DevRTT
         print("TimeoutInterval  =", TimeoutInterval)
 
-    except socket.timeout: #catches the exception errors so the program doesn’t crush of the client socket.settimeout(1), if there’s connection problems, and the timeout is longer than 1 second then it results in losing packages and udp waits for retransmission 
-        print( "Request timed out") 
+    except socket.timeout: #catches the exception errors so the program doesn’t crush of the client socket.settimeout(1), if there’s connection problems, and the timeout is longer than 1 second then it results in losing packages and udp waits for retransmission
+        print( "Request timed out")
         Packages_lost = sequence_number+1
 
         #package lost percentages =( packets lost)/(# packet sent).
