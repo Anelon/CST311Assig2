@@ -15,8 +15,7 @@ while True:
     message, address = serverSocket.recvfrom(1024)
     # Capitalize the message from the client
     message = message.upper()
-    # If rand is less is than 4, we consider the packet lost and do not
-    respond
+    # If rand is less is than 4, we consider the packet lost and do not respond
     if rand < 4:
         print ("Packet is lost ")
         continue

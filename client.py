@@ -5,13 +5,16 @@ from socket import *  # import socket interfaces
 from datetime import datetime
 serverName = 'localhost'  # server ip for computers
 serverPort = 12000 # server port number
-clientSocket = socket(AF_INET, SOCK_STREAM) # create the sockets
+clientSocket = socket(AF_INET, SOCK_DGRAM)
 clientSocket.settimeout(1) #sets time out for 1 second and blocks the incoming data package for checking connection and package loss
-sequence_number= 0
+sequence_number = 0
 TimeoutInterval = 0
 DevRTT = 0
 EstimatedRTT = 0
 packages = 0
+minRTT = 10000
+maxRTT = 0
+avgRTT = 0
 
 #(You should get the client to wait up to one second for a reply; if no reply is received within one second, your client program should assume that the packet was lost during transmission across the network https://docs.python.org/3/library/socket.html)
 
@@ -20,7 +23,6 @@ while packages < 10:
     start_time = datetime.now() #current start time
     # the client sends the message to the server, the client sends the ping message to the server
     clientSocket.sendto(message.encode(), (serverName, serverPort))
-    # clientSocket.sendto(message.encode(), (serverName, serverPort))
 
     try:
         message, address = clientSocket.recvfrom(1024) # message and address is received from the server, the client gets ping back
@@ -29,11 +31,6 @@ while packages < 10:
         print("Server responded: Round trip time (RTT) =", SampleRTT)
 
 
-        #( Your client software will need to determine and print out the minimum, maximum, and average RTTs at the end of all pings from the client along with printing out the number of packets lost and the packet loss rate (in percentage).  Then compute and print what should be the timeout period based on the RTT results. )
-
-        print("Approximate round trip times in milli-seconds:")
-        print ("Minimum =", min(SampleRTT),"ms, Maximum =", max(SampleRTT),"ms Average =", avg(SampleRTT),"ms")
-
         #(Then compute and print what should be the timeout period based on the RTT results.)
         #(10 %) Calculate and print the estimated RTT. Consider alpha = 0.125.
         #Formula: EstimatedRTT = (1- 0.125)*EstimatedRTT + 0.125*SampleRTT
@@ -41,6 +38,7 @@ while packages < 10:
         EstimatedRTT = 0.875*EstimatedRTT + 0.125*sampleRTT
         print("EstimatedRTT =", EstimatedRTT)
 
+        #TODO calculate min max and average
         #( (10 %) Calculate and print DevRTT. Consider beta = 0.25. Calculate and print Timeout interval.
 
         #estimate SampleRTT deviation from EstimatedRTT Formula: DevRTT = (1-0.25)*DevRTT +  0.25*|SampleRTT-EstimatedRTT|
@@ -50,7 +48,7 @@ while packages < 10:
         print("DevRTT =", DevRTT)
 
         TimeoutInterval = EstimatedRTT + 4*DevRTT
-        Print("TimeoutInterval  =", TimeoutInterval)
+        print("TimeoutInterval  =", TimeoutInterval)
 
     except socket.timeout: #catches the exception errors so the program doesn’t crush of the client socket.settimeout(1), if there’s connection problems, and the timeout is longer than 1 second then it results in losing packages and udp waits for retransmission 
         print( "Request timed out") 
@@ -65,3 +63,8 @@ while packages < 10:
             clientSocket.close()  #closes connection
 
 
+#( Your client software will need to determine and print out the minimum, maximum, and average RTTs at the end of all pings from the client along with printing out the number of packets lost and the packet loss rate (in percentage).  Then compute and print what should be the timeout period based on the RTT results. )
+
+#TODO
+print("Approximate round trip times in milli-seconds:")
+print ("Minimum =", min(SampleRTT),"ms, Maximum =", max(SampleRTT),"ms Average =", avg(SampleRTT),"ms")
