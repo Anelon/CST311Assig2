@@ -3,7 +3,7 @@
 from __future__ import division #uses division format
 from socket import *  # import socket interfaces
 from datetime import datetime
-serverName = '127.0.0.1'  # server ip for computers
+serverName = 'localhost'  # server ip for computers
 serverPort = 12000 # server port number
 clientSocket = socket(AF_INET, SOCK_STREAM) # create the sockets
 clientSocket.settimeout(1) #sets time out for 1 second and blocks the incoming data package for checking connection and package loss
