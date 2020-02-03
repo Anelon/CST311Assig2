@@ -1,36 +1,58 @@
-#The client sends a “ping” message package to the UDP server. Then UDP client waits for a second before retransmissions/sends another “ping” message package to the UDP server and it blocks the income “ping” message package. If it the UDP client has to wait longer than 1 second to retransmissions/resends another package, then this would result in loss of packages because the packages that were sent did not get sent back. This program calculates and prints the minimum, maximum, and average RTTs at the end of all pings from the client, the number of packets lost and the packet loss rate (in percentage).  It also computes and prints the estimated RTT, DevRTT, and the TimeoutInterval based on the RTT results.
+# The client sends a “ping” message package to the UDP server. Then UDP client waits for a second 
+# before retransmissions/sends another “ping” message package to the UDP server and it blocks the
+# income “ping” message package. If it the UDP client has to wait longer than 1 second to
+# retransmissions/resends another package, then this would result in loss of packages because the
+# packages that were sent did not get sent back. This program calculates and prints the minimum, 
+# maximum, and average RTTs at the end of all pings from the client, the number of packets lost
+# and the packet loss rate (in percentage).  It also computes and prints the estimated RTT,
+# DevRTT, and the TimeoutInterval based on the RTT results.
 
 from __future__ import division #uses division format
 from socket import *  # import socket interfaces
-from datetime import datetime
-import time
+from time import  time
+from statistics import mean
 serverName = 'localhost'  # server ip for computers
 serverPort = 12000 # server port number
 clientSocket = socket(AF_INET, SOCK_DGRAM)
-clientSocket.settimeout(1) #sets time out for 1 second and blocks the incoming data package for checking connection and package loss
+clientSocket.settimeout(1) #sets time out for 1 second and blocks the incoming data package
+                            # for checking connection and package loss
 sequence_number = 0
 TimeoutInterval = 0
 DevRTT = 0
 EstimatedRTT = 0
 packages = 0
-minRTT = 10000
-maxRTT = 0
-avgRTT = 0
+lostPackages = 0
+minRTT = -1
+maxRTT = -1
+RTTs = []
+address = serverName
 
-#(You should get the client to wait up to one second for a reply; if no reply is received within one second, your client program should assume that the packet was lost during transmission across the network https://docs.python.org/3/library/socket.html)
+# You should get the client to wait up to one second for a reply; if no reply
+# is received within one second, your client
+# program should assume that the packet was lost during transmission across the
+# network https://docs.python.org/3/library/socket.html
 
 while packages < 10:
+    packages +=1
     message = "Ping"
-    start_time = int(round(time.time() * 1000)) #current start time
+    start_time = int(round(time() * 1000)) # current start time
     # the client sends the message to the server, the client sends the ping message to the server
     clientSocket.sendto(message.encode(), (serverName, serverPort))
 
     try:
         message, address = clientSocket.recvfrom(1024) # message and address is received from the server, the client gets ping back
-        end_time = int(round(time.time() * 1000)) #end time
+        end_time = int(round(time() * 1000)) #end time
         SampleRTT = end_time-start_time #round trip time for the UPD client to send “ping” and get the “ping” message back
         print("Server responded: Round trip time (RTT) =", SampleRTT)
-
+        if minRTT == -1:
+            minRTT = SampleRTT
+        if maxRTT == -1:
+            maxRTT = SampleRTT
+        if SampleRTT < minRTT:
+            minRtt = SampleRTT
+        if SampleRTT > maxRTT:
+            maxRTT = SampleRTT
+        RTTs.append(SampleRTT)
 
         #(Then compute and print what should be the timeout period based on the RTT results.)
         #(10 %) Calculate and print the estimated RTT. Consider alpha = 0.125.
@@ -51,21 +73,22 @@ while packages < 10:
         TimeoutInterval = EstimatedRTT + 4*DevRTT
         print("TimeoutInterval  =", TimeoutInterval)
 
-    except socket.timeout: #catches the exception errors so the program doesn’t crush of the client socket.settimeout(1), if there’s connection problems, and the timeout is longer than 1 second then it results in losing packages and udp waits for retransmission
+    except: #catches the exception errors so the program doesn’t crush of the client socket.settimeout(1), if there’s connection problems, and the timeout is longer than 1 second then it results in losing packages and udp waits for retransmission
         print( "Request timed out")
-        Packages_lost = sequence_number+1
+        lostPackages +=1
 
         #package lost percentages =( packets lost)/(# packet sent).
-        percentage =  "{0:.0f}%".format((Packages_lost/sequence_number)*100)
+        percentage =  "{0:.0f}%".format((lostPackages/packages)*100)
         print("Ping statistics for", address)
-        print("Packets: Sent =", packages, "Received =", packages, "Lost = ", Packages_lost, "(", percentage, "loss),")
+        print("Packets: Sent =", packages, "Received =", packages, "Lost = ", lostPackages, "(", percentage, "loss),")
     finally:
-        if sequence_number == 10:
+        if packages == 10:
             clientSocket.close()  #closes connection
 
 
-#( Your client software will need to determine and print out the minimum, maximum, and average RTTs at the end of all pings from the client along with printing out the number of packets lost and the packet loss rate (in percentage).  Then compute and print what should be the timeout period based on the RTT results. )
 
-#TODO
+#( Your client software will need to determine and print out the minimum, maximum, and average RTTs at the end of all pings from the client along with printing out the number of packets lost and the packet loss rate (in percentage).  Then compute and print what should be the timeout period based on the RTT results. )
+avgRTT = mean(RTTs)
+print("Packets: Sent =", packages, "Received =", packages, "Lost = ", lostPackages, "(", percentage, "loss),")
 print("Approximate round trip times in milli-seconds:")
-print ("Minimum =", min(SampleRTT),"ms, Maximum =", max(SampleRTT),"ms Average =", avg(SampleRTT),"ms")
+print ("Minimum =", minRTT,"ms, Maximum =", maxRTT,"ms Average =", avgRTT,"ms")
