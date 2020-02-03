@@ -1,0 +1,44 @@
+Pseudo Code- Server - AT
+#Initiate socket creation protocol
+Import random
+From socket import *
+serverSocket = socket(AF_INET, SOCK_DGRAM)
+#Assign port number (12,000) to the default IP
+serverSocket.bind((‘ ’, 12000))
+While connection is true:
+random = random int (0,10)
+Print random number
+Message,address = message from client
+#capitalize
+Message = message.upper()
+If random < 4, continues
+Else severSocket.sento(message, address)
+
+Pseudo Code- Client- AT
+#Initiate socket creation protocol
+serverName = 127.0.0.1
+serverPort = 12000
+clientSocket = socket(AF_INET, SOCK_STREAM)
+clientSocket.connect(serverName, serverPort)
+#Get user input and initialize variables
+message =”ping”
+serverCount=0
+success = 0
+dRTT=0
+eRTT=0
+
+startTime= datetime.now() 
+endTime = 0
+clientSocket.settimeout(1)
+
+Try
+Message, address = clientSocket.recvfrom(1024)
+If time out, print “Request timed out”
+If response comes from server
+endTime = datetime.now()
+sampleRTT = (endTime - startTime)
+-Calculate RTT (“Consider alpha = 0.125”) and print
+-Calculate and print DevRTT (“Consider beta = 0.25”) and print
+Repeat 3 more times
+packetLossPercentage = success/4 * 100
+Print packetLossPercentage
