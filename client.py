@@ -16,11 +16,10 @@ serverPort = 12000 # server port number
 clientSocket = socket(AF_INET, SOCK_DGRAM)
 clientSocket.settimeout(1) #sets time out for 1 second and blocks the incoming data package
                             # for checking connection and package loss
-sequence_number = 0
+sequence_number = 1
 TimeoutInterval = 0
 DevRTT = 0
 EstimatedRTT = 0
-packages = 0
 lostPackages = 0
 minRTT = -1
 maxRTT = -1
@@ -32,8 +31,8 @@ address = serverName
 # program should assume that the packet was lost during transmission across the
 # network https://docs.python.org/3/library/socket.html
 
-while packages < 10:
-    packages +=1
+while sequence_number < 11:
+    sequence_number +=1
     message = "Ping"
     start_time = int(round(time() * 1000)) # current start time
     # the client sends the message to the server, the client sends the ping message to the server
@@ -78,17 +77,17 @@ while packages < 10:
         lostPackages +=1
 
         #package lost percentages =( packets lost)/(# packet sent).
-        percentage =  "{0:.0f}%".format((lostPackages/packages)*100)
+        percentage =  "{0:.0f}%".format((lostPackages/sequence_number)*100)
         print("Ping statistics for", address)
-        print("Packets: Sent =", packages, "Received =", packages, "Lost = ", lostPackages, "(", percentage, "loss),")
+        print("Packets: Sent =", sequence_number, "Received =", sequence_number, "Lost = ", lostPackages, "(", percentage, "loss),")
     finally:
-        if packages == 10:
+        if sequence_number == 11 :
             clientSocket.close()  #closes connection
 
 
 
 #( Your client software will need to determine and print out the minimum, maximum, and average RTTs at the end of all pings from the client along with printing out the number of packets lost and the packet loss rate (in percentage).  Then compute and print what should be the timeout period based on the RTT results. )
 avgRTT = mean(RTTs)
-print("Packets: Sent =", packages, "Received =", packages, "Lost = ", lostPackages, "(", percentage, "loss),")
+print("Packets: Sent =", sequence_number, "Received =", sequence_number, "Lost = ", lostPackages, "(", percentage, "loss),")
 print("Approximate round trip times in milli-seconds:")
 print ("Minimum =", minRTT,"ms, Maximum =", maxRTT,"ms Average =", avgRTT,"ms")
