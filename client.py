@@ -1,4 +1,4 @@
-# The client sends a “ping” message package to the UDP server. Then UDP client waits for a second
+﻿# The client sends a “ping” message package to the UDP server. Then UDP client waits for a second
 # before retransmissions/sends another “ping” message package to the UDP server and it blocks the
 # income “ping” message package. If it the UDP client has to wait longer than 1 second to
 # retransmissions/resends another package, then this would result in loss of packages because the
@@ -91,4 +91,4 @@ while sequence_number < 10:
 avgRTT = total/sequence_number
 print("Packets: Sent =", sequence_number, "Received =", sequence_number, "Lost = ", lostPackages, "(", percentage, "loss),")
 print("Approximate round trip times in milli-seconds:")
-print ("Minimum =", minRTT,"ms, Maximum =", maxRTT,"ms Average =", avgRTT,"ms")
+print ("Minimum =", '{0:.2f}'.format(minRTT),"ms, Maximum =",'{0:.2f}'.format(maxRTT),"ms Average =", '{0:.2f}'.format(avgRTT),"ms")
