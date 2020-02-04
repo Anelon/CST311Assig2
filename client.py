@@ -33,7 +33,6 @@ address = serverName
 # network https://docs.python.org/3/library/socket.html
 
 while sequence_number < 11:
-    sequence_number +=1
     message = "Ping"
     start_time = datetime.now().microsecond/1000
     # the client sends the message to the server, the client sends the ping message to the server
@@ -61,7 +60,6 @@ while sequence_number < 11:
         EstimatedRTT = 0.875*EstimatedRTT + 0.125*SampleRTT
         print("EstimatedRTT =", EstimatedRTT)
 
-        #TODO calculate min max and average
         #( (10 %) Calculate and print DevRTT. Consider beta = 0.25. Calculate and print Timeout interval.
 
         #estimate SampleRTT deviation from EstimatedRTT Formula: DevRTT = (1-0.25)*DevRTT +  0.25*|SampleRTT-EstimatedRTT|
@@ -84,11 +82,11 @@ while sequence_number < 11:
             percentage = "{0:.0f}%".format((lostPackages/sequence_number)*100)
     percentage = "{0:.0f}%".format((lostPackages/sequence_number)*100)
     print("Ping statistics for", address)
-    print("Packets: Sent =", sequence_number, "Received =", sequence_number, "Lost = ", lostPackages, "(", percentage,
-          "loss),")
+    print("Packets: Sent =", sequence_number, "Received =", sequence_number - lostPackages, "Lost = ", lostPackages, "(", percentage, "loss),")
+    sequence_number +=1
 
 #( Your client software will need to determine and print out the minimum, maximum, and average RTTs at the end of all pings from the client along with printing out the number of packets lost and the packet loss rate (in percentage).  Then compute and print what should be the timeout period based on the RTT results. )
 avgRTT = total/sequence_number
-print("Packets: Sent =", sequence_number, "Received =", sequence_number, "Lost = ", lostPackages, "(", percentage, "loss),")
+#print("Packets: Sent =", sequence_number, "Received =", sequence_number - lostPackages, "Lost = ", lostPackages, "(", percentage, "loss),")
 print("Approximate round trip times in milli-seconds:")
 print ("Minimum =", '{0:.2f}'.format(minRTT),"ms, Maximum =",'{0:.2f}'.format(maxRTT),"ms Average =", '{0:.2f}'.format(avgRTT),"ms")
