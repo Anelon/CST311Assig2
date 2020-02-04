@@ -17,7 +17,7 @@ serverPort = 12000 # server port number
 clientSocket = socket(AF_INET, SOCK_DGRAM)
 clientSocket.settimeout(1) #sets time out for 1 second and blocks the incoming data package
                             # for checking connection and package loss
-sequence_number = 1
+sequence_number = 0
 TimeoutInterval = 0
 DevRTT = 0
 EstimatedRTT = 0
@@ -32,7 +32,7 @@ address = serverName
 # program should assume that the packet was lost during transmission across the
 # network https://docs.python.org/3/library/socket.html
 
-while sequence_number < 11:
+while sequence_number < 10:
     sequence_number +=1
     message = "Ping"
     start_time = datetime.now().microsecond/1000
@@ -78,15 +78,14 @@ while sequence_number < 11:
         lostPackages +=1
 
         #package lost percentages =( packets lost)/(# packet sent).
-        percentage = "{0:.0f}%".format((lostPackages/sequence_number)*100)
-        print("Ping statistics for", address)
-        print("Packets: Sent =", sequence_number, "Received =", sequence_number, "Lost = ", lostPackages, "(", percentage, "loss),")
     finally:
         if sequence_number == 11 :
             clientSocket.close()  #closes connection
             percentage = "{0:.0f}%".format((lostPackages/sequence_number)*100)
-
-
+    percentage = "{0:.0f}%".format((lostPackages/sequence_number)*100)
+    print("Ping statistics for", address)
+    print("Packets: Sent =", sequence_number, "Received =", sequence_number, "Lost = ", lostPackages, "(", percentage,
+          "loss),")
 
 #( Your client software will need to determine and print out the minimum, maximum, and average RTTs at the end of all pings from the client along with printing out the number of packets lost and the packet loss rate (in percentage).  Then compute and print what should be the timeout period based on the RTT results. )
 avgRTT = mean(RTTs)
