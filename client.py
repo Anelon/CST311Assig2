@@ -17,7 +17,7 @@ serverPort = 12000 # server port number
 clientSocket = socket(AF_INET, SOCK_DGRAM)
 clientSocket.settimeout(1) #sets time out for 1 second and blocks the incoming data package
                             # for checking connection and package loss
-sequence_number = 0
+sequence_number = 1
 TimeoutInterval = 0
 DevRTT = 0
 EstimatedRTT = 0
@@ -32,7 +32,7 @@ address = serverName
 # program should assume that the packet was lost during transmission across the
 # network https://docs.python.org/3/library/socket.html
 
-while sequence_number < 10:
+while sequence_number < 11:
     sequence_number +=1
     message = "Ping"
     start_time = datetime.now().microsecond/1000
