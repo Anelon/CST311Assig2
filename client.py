@@ -24,7 +24,7 @@ EstimatedRTT = 0
 lostPackages = 0
 minRTT = -1
 maxRTT = -1
-RTTs = []
+total = 0
 address = serverName
 
 # You should get the client to wait up to one second for a reply; if no reply
@@ -52,7 +52,7 @@ while sequence_number < 10:
             minRtt = SampleRTT
         if SampleRTT > maxRTT:
             maxRTT = SampleRTT
-        RTTs.append(SampleRTT)
+        total += SampleRTT
 
         #(Then compute and print what should be the timeout period based on the RTT results.)
         #(10 %) Calculate and print the estimated RTT. Consider alpha = 0.125.
@@ -88,7 +88,7 @@ while sequence_number < 10:
           "loss),")
 
 #( Your client software will need to determine and print out the minimum, maximum, and average RTTs at the end of all pings from the client along with printing out the number of packets lost and the packet loss rate (in percentage).  Then compute and print what should be the timeout period based on the RTT results. )
-avgRTT = mean(RTTs)
+avgRTT = total/sequence_number
 print("Packets: Sent =", sequence_number, "Received =", sequence_number, "Lost = ", lostPackages, "(", percentage, "loss),")
 print("Approximate round trip times in milli-seconds:")
 print ("Minimum =", minRTT,"ms, Maximum =", maxRTT,"ms Average =", avgRTT,"ms")
