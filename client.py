@@ -1,4 +1,6 @@
-﻿# The client sends a “ping” message package to the UDP server. Then UDP client waits for a second
+﻿### client.py ###
+
+# The client sends a “ping” message package to the UDP server. Then UDP client waits for a second
 # before retransmissions/sends another “ping” message package to the UDP server and it blocks the
 # income “ping” message package. If it the UDP client has to wait longer than 1 second to
 # retransmissions/resends another package, then this would result in loss of packages because the
@@ -12,7 +14,7 @@ from socket import *  # import socket interfaces
 from time import  time
 from statistics import mean
 from datetime import datetime
-serverName = 'www.bell-andrew.com'  # server ip for computers
+serverName = 'localhost'  # server ip for computers
 serverPort = 12000 # server port number
 clientSocket = socket(AF_INET, SOCK_DGRAM)
 clientSocket.settimeout(1) #sets time out for 1 second and blocks the incoming data package
@@ -33,13 +35,14 @@ address = serverName
 # network https://docs.python.org/3/library/socket.html
 
 while sequence_number < 11:
-    message = "Ping"
     start_time = datetime.now().microsecond/1000
+    message = "Ping " + str(sequence_number) + " " + str(datetime.now())
     # the client sends the message to the server, the client sends the ping message to the server
     clientSocket.sendto(message.encode(), (serverName, serverPort))
 
     try:
         message, address = clientSocket.recvfrom(1024) # message and address is received from the server, the client gets ping back
+        print("Server reply: ", str(message))
         end_time = datetime.now().microsecond/1000  #end time
         SampleRTT = end_time-start_time #round trip time for the UPD client to send “ping” and get the “ping” message back
         print("Server responded: Round trip time (RTT) =", SampleRTT)
